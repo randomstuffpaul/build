@@ -513,13 +513,12 @@ def GetImage(which, tmpdir, info_dict):
 
 
 def CopyInstallTools(output_zip):
-  oldcwd = os.getcwd()
-  os.chdir(os.getenv('OUT'))
-  for root, subdirs, files in os.walk("install"):
+  install_path = os.path.join(OPTIONS.input_tmp, "INSTALL")
+  for root, subdirs, files in os.walk(install_path):
     for f in files:
-      p = os.path.join(root, f)
-      output_zip.write(p, p)
-  os.chdir(oldcwd)
+      install_source = os.path.join(root, f)
+      install_target = os.path.join("install", os.path.relpath(root, install_path), f)
+      output_zip.write(install_source, install_target)
 
 
 def WriteFullOTAPackage(input_zip, output_zip):
@@ -648,6 +647,14 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   if HasVendorPartition(input_zip):
     system_progress -= 0.1
 
+  script.AppendExtra("if is_mounted(\"/data\") then")
+  script.ValidateSignatures("data")
+  script.AppendExtra("else")
+  script.Mount("/data")
+  script.ValidateSignatures("data")
+  script.Unmount("/data")
+  script.AppendExtra("endif;")
+
   if "selinux_fc" in OPTIONS.info_dict:
     WritePolicyConfig(OPTIONS.info_dict["selinux_fc"], output_zip)
 
@@ -712,21 +719,13 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   common.CheckSize(boot_img.data, "boot.img", OPTIONS.info_dict)
   common.ZipWriteStr(output_zip, "boot.img", boot_img.data)
 
+  device_specific.FullOTA_PostValidate()
+
   if OPTIONS.backuptool:
     script.ShowProgress(0.02, 10)
     if block_based:
-      script.Mount("/system")    	
-    script.Print("Restoring system...")
-    script.RunBackup("restore")  
-    if block_based:
-      script.Unmount("/system")
-
-    script.Print("Flashing SuperSU...")
-    common.ZipWriteStr(output_zip, "supersu/supersu.zip",
-                   ""+input_zip.read("SYSTEM/addon.d/SuperSU.zip"))
-    script.Mount("/system")
-    script.FlashSuperSU()
-    
+      script.Mount("/system")
+    script.RunBackup("restore")
     if block_based:
       script.Unmount("/system")
 
