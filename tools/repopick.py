@@ -82,7 +82,7 @@ def fetch_query_via_ssh(remote_url, query):
                     'fetch': {
                         'ssh': {
                             'ref': patch_set['ref'],
-                            'url': u'ssh://{0}:{1}/{2}'.format(userhost, port, data['project'])
+                            'url': 'ssh://{0}:{1}/{2}'.format(userhost, port, data['project'])
                         }
                     }
                 } for patch_set in data['patchSets']},
@@ -105,7 +105,7 @@ def fetch_query_via_http(remote_url, query):
     reviews = json.loads(data[5:])
 
     for review in reviews:
-        review[u'number'] = review.pop('_number')
+        review['number'] = review.pop('_number')
 
     return reviews
 
@@ -120,8 +120,8 @@ def fetch_query(remote_url, query):
         raise Exception('Gerrit URL should be in the form http[s]://hostname/ or ssh://[user@]host[:port]')
 
 if __name__ == '__main__':
-    # Default to CyanogenMod Gerrit
-    default_gerrit = 'http://review.cyanogenmod.org'
+    # Default to Candy Gerrit
+    default_gerrit = 'https://gerrit.bbqdroid.org'
 
     parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''\
         repopick.py is a utility to simplify the process of cherry picking
@@ -151,6 +151,7 @@ if __name__ == '__main__':
     parser.add_argument('-t', '--topic', help='pick all commits from a specified topic')
     parser.add_argument('-Q', '--query', help='pick all commits using the specified query')
     parser.add_argument('-g', '--gerrit', default=default_gerrit, help='Gerrit Instance to use. Form proto://[user@]host[:port]')
+    parser.add_argument('-e', '--exclude', nargs=1, help='exclude a list of commit numbers separated by a ,')
     args = parser.parse_args()
     if not args.start_branch and args.abandon_first:
         parser.error('if --abandon-first is set, you must also give the branch name with --start-branch')
@@ -237,12 +238,20 @@ if __name__ == '__main__':
     # make list of things to actually merge
     mergables = []
 
+    # If --exclude is given, create the list of commits to ignore
+    exclude = []
+    if args.exclude:
+        exclude = args.exclude[0].split(',')
+
     for change in change_numbers:
         patchset = None
         if '/' in change:
             (change, patchset) = change.split('/')
-        change = int(change)
 
+        if change in exclude:
+            continue
+
+        change = int(change)
         review = [x for x in reviews if x['number'] == change][0]
         mergables.append({
             'subject': review['subject'],
@@ -315,10 +324,10 @@ if __name__ == '__main__':
             else:
                 print(cmd)
             result = subprocess.call([' '.join(cmd)], cwd=project_path, shell=True)
-            if result != 0:
+            FETCH_HEAD = '{0}/.git/FETCH_HEAD'.format(project_path)
+            if result != 0 and os.stat(FETCH_HEAD).st_size != 0:
                 print('ERROR: git command failed')
                 sys.exit(result)
-            FETCH_HEAD = '{0}/.git/FETCH_HEAD'.format(project_path)
         # Check if it worked
         if args.gerrit != default_gerrit or os.stat(FETCH_HEAD).st_size == 0:
             # If not using the default gerrit or github failed, fetch from gerrit.
