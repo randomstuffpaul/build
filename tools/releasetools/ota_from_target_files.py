@@ -116,7 +116,6 @@ import multiprocessing
 import os
 import tempfile
 import zipfile
-
 import common
 import edify_generator
 import sparse_img
@@ -722,12 +721,25 @@ else if get_stage("%(bcb_dev)s") == "3/3" then
   device_specific.FullOTA_PostValidate()
 
   if OPTIONS.backuptool:
-    script.ShowProgress(0.02, 10)
-    if block_based:
-      script.Mount("/system")
-    script.RunBackup("restore")
-    if block_based:
-      script.Unmount("/system")
+      script.ShowProgress(0.02, 10)
+  if block_based:
+     script.Mount("/system")    	
+     script.Print("Restoring system...")
+     script.RunBackup("restore")  
+  if block_based:
+     script.Unmount("/system")
+
+     script.Print("Flashing SuperSU...")
+  common.ZipWriteStr(output_zip, "supersu/supersu.zip",
+                 ""+input_zip.read("SYSTEM/addon.d/SuperSU.zip"))
+    
+  script.Mount("/system")
+  script.FlashSuperSU()
+  script.Mount("/system")
+  script.RunBackup("restore")
+  
+  if block_based:
+	script.Unmount("/system")
 
   script.ShowProgress(0.05, 5)
   script.WriteRawImage("/boot", "boot.img")
