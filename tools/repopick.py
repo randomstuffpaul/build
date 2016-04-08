@@ -44,7 +44,7 @@ except ImportError:
 # Parse the command line
 parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter, description=textwrap.dedent('''\
     repopick.py is a utility to simplify the process of cherry picking
-    patches from SlimRoms Gerrit instance.
+    patches from CandyRoms Gerrit instance.
 
     Given a list of change numbers, repopick will cd into the project path
     and cherry pick the latest patch available.
@@ -194,7 +194,7 @@ while(True):
 
 # Get all commits for a specified query
 def fetch_query(query):
-    url = 'https://review.slimroms.org/changes/?q=%s' % query
+    url = 'https://gerrit.bbqdroid.org/changes/?q=%s' % query
     if args.verbose:
         print('Fetching all commits using query: %s\n' % query)
     f = urllib.request.urlopen(url)
@@ -264,7 +264,7 @@ for changeps in args.change_number:
     # gerrit returns two lines, a magic string and then valid JSON:
     #   )]}'
     #   [ ... valid JSON ... ]
-    url = 'http://review.slimroms.eu/changes/?q={change}&o={query_revision}&o=CURRENT_COMMIT&pp=0'.format(change=change, query_revision=query_revision)
+    url = 'https://gerrit.bbqdroid.org/changes/?q={change}&o={query_revision}&o=CURRENT_COMMIT&pp=0'.format(change=change, query_revision=query_revision)
     if args.verbose:
         print('Fetching from: %s\n' % url)
     try:
