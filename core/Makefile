@@ -1888,10 +1888,10 @@ bacon: otapackage
 	@echo -e ${CL_YLW}"══════════════════════════════════════════════════════════════════════════════════"${CL_RST}
 	@echo -e ${CL_BLU}"                     ██████╗"${CL_RED}" █████╗ "${CL_YLW}"███╗   ██╗"${CL_GRN}"██████╗ "${CL_BLU}"██╗   ██╗                   "${CL_RST}
 	@echo -e ${CL_BLU}"                    ██╔════╝"${CL_RED}"██╔══██╗"${CL_YLW}"████╗  ██║"${CL_GRN}"██╔══██╗"${CL_BLU}"╚██╗ ██╔╝                   "${CL_RST}
-	@echo -e ${CL_BLU}"                    ██║     "${CL_RED}"███████║"${CL_YLW}"██╔██╗ ██║"${CL_GRN}"██║  ██║"${CL_BLU}"  ╚██╔╝╝                    "${CL_RST}
+	@echo -e ${CL_BLU}"                    ██║     "${CL_RED}"███████║"${CL_YLW}"██╔██╗ ██║"${CL_GRN}"██║  ██║"${CL_BLU}" ╚═██╔═╝                    "${CL_RST}
 	@echo -e ${CL_BLU}"                    ██║     "${CL_RED}"██╔══██║"${CL_YLW}"██║╚██╗██║"${CL_GRN}"██║  ██║"${CL_BLU}"   ██║                      "${CL_RST}
-	@echo -e ${CL_BLU}"                    ╚██████╗"${CL_RED}"██║  ██║"${CL_YLW}"██║ ╚████║"${CL_GRN}"██████║║"${CL_BLU}"   ██║                      "${CL_RST}
-	@echo -e ${CL_BLU}"                     ╚═════╝"${CL_RED}"╚═╝  ╚═╝"${CL_YLW}"╚═╝  ╚═══╝"${CL_GRN}" ╚═════╝"${CL_BLU}"   ╚═╝                      "${CL_RST}
+	@echo -e ${CL_BLU}"                    ╚██████╗"${CL_RED}"██║  ██║"${CL_YLW}"██║ ╚████║"${CL_GRN}"██████╔╝"${CL_BLU}"   ██║                      "${CL_RST}
+	@echo -e ${CL_BLU}"                     ╚═════╝"${CL_RED}"╚═╝  ╚═╝"${CL_YLW}"╚═╝  ╚═══╝"${CL_GRN}" ╚════╝ "${CL_BLU}"   ╚═╝                      "${CL_RST}
 	@echo -e ${CL_YLW}"══════════════════════════════════════════════════════════════════════════════════"${CL_RST}
 	@echo -e ${CL_CYN}"$(CANDY_TARGET_PACKAGE)"${CL_RST}
 	@echo -e ${CL_YLW}"══════════════════════════════════════════════════════════════════════════════════"${CL_RST}
