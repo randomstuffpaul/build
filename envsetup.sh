@@ -619,18 +619,17 @@ function lunch()
     export TARGET_BUILD_APPS=
 
     local product=$(echo -n $selection | sed -e "s/-.*$//")
-    local device=$(echo -n $product | sed -e "s/.*candy_//")
     check_product $product
     if [ $? -ne 0 ]
     then
         # if we can't find a product, try to grab it off the CANDY github
         T=$(gettop)
         pushd $T > /dev/null
-        build/tools/roomservice.py $device
+        build/tools/roomservice.py $product
         popd > /dev/null
         check_product $product
     else
-        build/tools/roomservice.py -d $device
+        build/tools/roomservice.py $product true
     fi
     if [ $? -ne 0 ]
     then
