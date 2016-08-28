@@ -682,22 +682,25 @@ function lunch()
     fi
 
     local product=$(echo -n $selection | sed -e "s/-.*$//")
-    TARGET_PRODUCT=$product \
-    TARGET_BUILD_VARIANT=$variant \
-    build_build_var_cache
+    check_product $product
+
     if [ $? -ne 0 ]
-     then
-        # if we can't find a product, try to grab it off the CANDY github
-        T=$(gettop)
-        pushd $T > /dev/null
-        build/tools/roomservice.py $product
-        popd > /dev/null
-        check_product $product
+    then
+       # if we can't find a product, try to grab it off the Turbo github
+       T=$(gettop)
+       pushd $T > /dev/null
+       build/tools/roomservice.py $product
+       popd > /dev/null
+       check_product $product
     else
         build/tools/roomservice.py $product true
     fi
-    if [ $? -ne 0 ]
 
+    TARGET_PRODUCT=$product \
+    TARGET_BUILD_VARIANT=$variant \
+    build_build_var_cache
+
+    if [ $? -ne 0 ]
     then
         echo
         echo "** Don't have a product spec for: '$product'"
